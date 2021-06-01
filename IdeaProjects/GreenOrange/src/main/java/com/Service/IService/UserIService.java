@@ -1,7 +1,10 @@
 package com.Service.IService;
 
+import com.Service.Model.AddressModel;
 import com.Service.Model.UserModel;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 
 public interface UserIService {
     //注册新用户：返回userid
@@ -18,4 +21,14 @@ public interface UserIService {
 
     //根据用户手机号获取用户信息
     public UserModel getUserModelByTelphone(String telphone);
+
+    int addAddress(AddressModel model);
+
+    int deleteAddress(int addressid);
+
+    int updateAddress(AddressModel model);
+
+    AddressModel getAddressById(String addressid);
+
+    ArrayList<AddressModel> getAddressList(int userid);
 }

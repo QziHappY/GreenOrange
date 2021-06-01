@@ -1,10 +1,13 @@
 package com.Service.ServiceImpl;
 
+import com.Dao.AddressDOMapper;
+import com.Dao.DataObject.AddressDO;
 import com.Dao.DataObject.UserDO;
 import com.Dao.DataObject.UserPasswordDO;
 import com.Dao.UserDOMapper;
 import com.Dao.UserPasswordDOMapper;
 import com.Service.IService.UserIService;
+import com.Service.Model.AddressModel;
 import com.Service.Model.UserModel;
 import com.Utils.JwtUtil;
 import org.springframework.beans.BeanUtils;
@@ -13,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -24,6 +28,8 @@ public class UserServiceImpl implements UserIService {
     UserPasswordDOMapper userPasswordDOMapper;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private AddressDOMapper addressDOMapper;
     @Override
     @Transactional
     public int resign(UserModel userModel) {
@@ -80,6 +86,37 @@ public class UserServiceImpl implements UserIService {
         userModel.setEncrptPassword(userPasswordDO.getEncrptPassword());
         return userModel;
     }
+
+    @Override
+    public int addAddress(AddressModel model) {
+        return addressDOMapper.insert(new AddressDO(model));
+    }
+
+    @Override
+    public int deleteAddress(int addressid) {
+        return addressDOMapper.deleteByPrimaryKey(addressid);
+    }
+
+    @Override
+    public int updateAddress(AddressModel model) {
+        return addressDOMapper.updateByPrimaryKey(new AddressDO(model));
+    }
+
+    @Override
+    public AddressModel getAddressById(String addressid) {
+        return new AddressModel(addressDOMapper.selectByPrimaryKey(Integer.parseInt(addressid)));
+    }
+
+    @Override
+    public ArrayList<AddressModel> getAddressList(int userid) {
+        ArrayList<AddressModel> models=new ArrayList<>();
+        ArrayList<AddressDO> dos=addressDOMapper.selectByUserid(userid);
+        for(int i=0;i<dos.size();i++){
+            models.add(new AddressModel(dos.get(i)));
+        }
+        return models;
+    }
+
     //userid或telphone,opt绑定token
     @Transactional
     public String setToken(int userid,String telphone,String opt) {
@@ -95,4 +132,5 @@ public class UserServiceImpl implements UserIService {
         }
         return token;
     }
+
 }

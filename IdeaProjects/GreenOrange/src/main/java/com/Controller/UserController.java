@@ -1,6 +1,7 @@
 package com.Controller;
 import com.Controller.ReturnType.CommonReturnType;
 import com.Controller.ViewObject.UserVo;
+import com.Service.Model.AddressModel;
 import com.Service.Model.UserModel;
 import com.Service.ServiceImpl.UserServiceImpl;
 import com.Utils.Base64Utils;
@@ -11,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import sun.jvm.hotspot.debugger.Address;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -158,13 +161,13 @@ public class UserController {
      */
     @RequestMapping("/loginByPassword")
     @ResponseBody
-    public CommonReturnType  loginByPassword(@RequestParam("telphone") String telphone, @RequestParam("p") String entrycp_password){
+    public CommonReturnType  loginByPassword(@RequestParam("telphone") String telphone, @RequestParam("entrypt_password") String entrypt_password){
         UserModel userModel=userServiceImpl.getUserModelByTelphone(telphone);
         if(userModel==null){
             return CommonReturnType.create("error","还没有注册过");
         }
         String password_1=Base64Utils.decode(userModel.getEncrptPassword());//Base64解密
-        String password_2=entrycp_password;//前端解密
+        String password_2=entrypt_password;//前端解密
         //验证密码
         if(StringUtils.equals(password_1,password_2)){
             String token=userServiceImpl.setToken(userModel.getUserid(),"","");//生成token并与userid绑定
@@ -270,4 +273,106 @@ public class UserController {
         return CommonReturnType.create("");
     }
 
+
+    /**
+     * 查看用户的地址信息列表
+     */
+    @RequestMapping("/getAddressList")
+    @ResponseBody
+    public CommonReturnType getAddressList(@RequestParam("token")String token){
+        //查看用户是否登录
+        if(StringUtils.isEmpty(token)||StringUtils.equals(token,"")){
+            return CommonReturnType.create("error","未登录");
+        }
+        String userid_=redisTemplate.opsForValue().get(token+"_userid").toString();
+        if(StringUtils.isEmpty(userid_)||StringUtils.equals(userid_,"")){
+            return CommonReturnType.create("error","登录已失效");
+        }
+        ArrayList<AddressModel> addressModels=userServiceImpl.getAddressList(Integer.parseInt(userid_));
+        return CommonReturnType.create(addressModels);
     }
+    /**
+     * 查看地址详细信息
+     */
+    @RequestMapping("/getAddress")
+    @ResponseBody
+    public CommonReturnType getAddress(String addressid){
+        String token=httpServletRequest.getHeader("token");
+        //查看用户是否登录
+        if(StringUtils.isEmpty(token)||StringUtils.equals(token,"")){
+            return CommonReturnType.create("error","未登录");
+        }
+        String userid_=redisTemplate.opsForValue().get(token+"_userid").toString();
+        if(StringUtils.isEmpty(userid_)||StringUtils.equals(userid_,"")){
+            return CommonReturnType.create("error","登录已失效");
+        }
+        AddressModel addressModel=userServiceImpl.getAddressById(addressid);
+        return CommonReturnType.create(addressModel);
+    }
+    /**
+     * 修改地址信息
+     */
+    @RequestMapping("/updateAddress")
+    @ResponseBody
+    public CommonReturnType getAddress(AddressModel model){
+        String token=httpServletRequest.getHeader("token");
+        //查看用户是否登录
+        if(StringUtils.isEmpty(token)||StringUtils.equals(token,"")){
+            return CommonReturnType.create("error","未登录");
+        }
+        String userid_=redisTemplate.opsForValue().get(token+"_userid").toString();
+        if(StringUtils.isEmpty(userid_)||StringUtils.equals(userid_,"")){
+            return CommonReturnType.create("error","登录已失效");
+        }
+        int result=userServiceImpl.updateAddress(model);
+        if(result>=1){
+            return CommonReturnType.create("");
+        }else{
+            return CommonReturnType.create("error","修改失败");
+        }
+    }
+    /**
+     * 删除地址信息
+     */
+    @RequestMapping("/deleteAddress")
+    @ResponseBody
+    public CommonReturnType deleteAddress(int addressid){
+        String token=httpServletRequest.getHeader("token");
+        //查看用户是否登录
+        if(StringUtils.isEmpty(token)||StringUtils.equals(token,"")){
+            return CommonReturnType.create("error","未登录");
+        }
+        String userid_=redisTemplate.opsForValue().get(token+"_userid").toString();
+        if(StringUtils.isEmpty(userid_)||StringUtils.equals(userid_,"")){
+            return CommonReturnType.create("error","登录已失效");
+        }
+        int result=userServiceImpl.deleteAddress(addressid);
+        if(result>=1){
+            return CommonReturnType.create("");
+        }else{
+            return CommonReturnType.create("error","删除失败");
+        }
+    }
+    /**
+     * 新增地址信息
+     */
+    @RequestMapping("/addAddress")
+    @ResponseBody
+    public CommonReturnType deleteAddress(AddressModel model){
+        String token=httpServletRequest.getHeader("token");
+        //查看用户是否登录
+        if(StringUtils.isEmpty(token)||StringUtils.equals(token,"")){
+            return CommonReturnType.create("error","未登录");
+        }
+        String userid_=redisTemplate.opsForValue().get(token+"_userid").toString();
+        if(StringUtils.isEmpty(userid_)||StringUtils.equals(userid_,"")){
+            return CommonReturnType.create("error","登录已失效");
+        }
+        int result=userServiceImpl.addAddress(model);
+        if(result>=1){
+            return CommonReturnType.create("");
+        }else{
+            return CommonReturnType.create("error","新增失败");
+        }
+    }
+}

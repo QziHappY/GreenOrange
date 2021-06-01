@@ -7,7 +7,7 @@ public class OrderAttributesModel {
     private BigDecimal price;
     private BigDecimal finalprice;
     private Integer amount;
-    private Integer orderid;
+    private String orderid;
     private Integer itemattarbutesid;
     private Integer evaluateid;
     private Integer activityid;
@@ -49,11 +49,11 @@ public class OrderAttributesModel {
         this.amount = amount;
     }
 
-    public Integer getOrderid() {
+    public String getOrderid() {
         return orderid;
     }
 
-    public void setOrderid(Integer orderid) {
+    public void setOrderid(String orderid) {
         this.orderid = orderid;
     }
 

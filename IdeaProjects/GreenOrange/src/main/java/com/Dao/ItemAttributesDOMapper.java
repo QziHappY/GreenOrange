@@ -59,4 +59,6 @@ public interface ItemAttributesDOMapper {
     ArrayList<ItemAttributesDO> seletByItemID(Integer itemid);
 
     int reduceShock(@Param("itemAttributesid") Integer itemattributesid, @Param("amount") Integer amount);
+
+    int addShock(@Param("itemAttributesid") Integer itemattributesid, @Param("amount") Integer amount);
 }

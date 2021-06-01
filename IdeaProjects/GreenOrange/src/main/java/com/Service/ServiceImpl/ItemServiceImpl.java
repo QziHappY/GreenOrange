@@ -139,4 +139,14 @@ public class ItemServiceImpl implements ItemISerive {
         return itemAttributesDOMapper.selectByPrimaryKey(itemattarbutesid);
     }
 
+    @Override
+    public int updateStock(int itemAttributesid, int amount, String type) {
+       if(StringUtils.equals(type,"reduce")){
+           return itemAttributesDOMapper.reduceShock(itemAttributesid,amount);
+       }else{
+           return itemAttributesDOMapper.addShock(itemAttributesid,amount);
+       }
+    }
+
+
 }

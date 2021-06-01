@@ -1,5 +1,7 @@
 package com.Dao.DataObject;
 
+import com.Service.Model.OrderAttributesModel;
+
 import java.math.BigDecimal;
 
 public class OrderAttributesDO {
@@ -96,7 +98,7 @@ public class OrderAttributesDO {
 
     }
 
-    public OrderAttributesDO(OrderAttributesDO orderAttributesDO) {
+    public OrderAttributesDO(OrderAttributesModel orderAttributesDO) {
         this.price=orderAttributesDO.getPrice();
         this.finalprice=orderAttributesDO.getFinalprice();
         this.amount=orderAttributesDO.getAmount();

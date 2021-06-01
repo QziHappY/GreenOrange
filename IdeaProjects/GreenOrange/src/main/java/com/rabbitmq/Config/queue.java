@@ -26,4 +26,10 @@ public class queue {
     public Queue getOutTimeOrderDlxQueue(){
         return new Queue("outTimeOrderDlxQueue");
     }
+
+    //异步【更新库存】执行到数据库的队列
+    @Bean(name = "updateStockQueue")
+    public Queue getUpdateStockQueue(){
+        return new Queue("updateStockQueue", true, false, false, null);
+    }
 }

@@ -1,5 +1,6 @@
 package com.Service.IService;
 
+import com.Controller.ReturnType.CommonReturnType;
 import com.Controller.ViewObject.OrderVo;
 import com.Dao.DataObject.OrderAttributesDO;
 import com.Service.Model.OrderAttributesModel;
@@ -8,7 +9,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 public interface OrderIService {
-    String createOrder(int userid, ArrayList<OrderAttributesDO> list, int addressid) throws ParseException;
+    CommonReturnType createOrder(int userid, ArrayList<OrderAttributesModel> list, int addressid) throws ParseException, InterruptedException;
 
     int updateState(String orderid,String state);
 
@@ -18,4 +19,5 @@ public interface OrderIService {
 
     int deleteOrder(String orderid);
 
+    CommonReturnType submitOrder(ArrayList<OrderAttributesModel> attributesModels, String rollback) throws InterruptedException;
 }

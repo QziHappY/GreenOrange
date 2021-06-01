@@ -16,7 +16,7 @@ public class Exchange {
     @Bean
     Binding binging_OrderQueue_To_OrderFanoutExchange(@Qualifier("createOrderQueue")Queue createOrderQueue,
                                                       @Qualifier("createOrderDirectExchange") DirectExchange createOrderDirectExchange){
-        return BindingBuilder.bind(createOrderQueue).to(createOrderDirectExchange).with("createOrderDirectExchange");
+        return BindingBuilder.bind(createOrderQueue).to(createOrderDirectExchange).with("to_createOrderDirectExchange");
     }
     //【订单超时】死信交换机
     @Bean(name = "outTimeOrderDlxExchange")
@@ -30,4 +30,16 @@ public class Exchange {
         return BindingBuilder.bind(outTimeOrderDlxQueue).to(outTimeOrderDlxExchange).with("to_outTimeOrderDlxQueue");
     }
 
+
+    //【更新库存】交换机
+    @Bean(name = "updateStockDirectExchange")
+    DirectExchange getUpdateStockDirectExchange(){
+        return new DirectExchange("updateStockDirectExchange");
+    }
+    //将【更新库存】交换机与【更新库存】队列绑定：路由"to_updateStockQueue"
+    @Bean
+    Binding binging_updateStockQueue_To_updateStockDirectExchange(@Qualifier("updateStockQueue")Queue updateStockQueue,
+                                                      @Qualifier("updateStockDirectExchange") DirectExchange updateStockDirectExchange){
+        return BindingBuilder.bind(updateStockQueue).to(updateStockDirectExchange).with("to_updateStockQueue");
+    }
 }
